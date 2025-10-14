@@ -66,6 +66,54 @@
             to { opacity: 1; }
         }
         
+        /* ФИКС ДЛЯ МОБИЛЬНОГО МЕНЮ */
+        @media (max-width: 768px) {
+            /* Фиксированная кнопка меню которая всегда доступна */
+            #menu-button {
+                position: fixed !important;
+                top: 1rem !important;
+                right: 1rem !important;
+                background: white !important;
+                border: 2px solid #3B82F6 !important;
+                border-radius: 8px !important;
+                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+                padding: 12px !important;
+                z-index: 1001 !important;
+                width: 48px !important;
+                height: 48px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+            
+            /* Освободи место для кнопки в навигации */
+            nav .flex.items-center.space-x-2 {
+                margin-right: 70px;
+                min-height: 48px;
+            }
+            
+            /* Убедись что навигация не перекрывает */
+            nav {
+                position: relative;
+                z-index: 999;
+            }
+            
+            /* Мобильное меню под кнопкой */
+            #mobile-menu {
+                z-index: 998;
+                top: 80px;
+            }
+            
+            /* Увеличиваем отступ для якорных ссылок на мобильных */
+            html {
+                scroll-padding-top: 6rem;
+            }
+            
+            section {
+                scroll-margin-top: 6rem;
+            }
+        }
+        
         /* Гарантируем, что навигация всегда поверх контента */
         nav {
             z-index: 1000;
@@ -95,7 +143,7 @@
                     <a href="#contact" class="bg-primary text-white px-6 py-2 rounded-full hover:bg-blue-600 transition">Free Lesson</a>
                 </div>
                 
-                <button class="md:hidden p-2 rounded-md focus:outline-none z-60" onclick="toggleMobileMenu()" id="menu-button">
+                <button class="md:hidden p-2 rounded-md focus:outline-none" onclick="toggleMobileMenu()" id="menu-button">
                     <i data-feather="menu" id="menu-icon"></i>
                 </button>
             </div>
@@ -554,25 +602,23 @@
             
             if (isHidden) {
                 menu.classList.remove('hidden');
+                // Меняем иконку на крестик
+                document.getElementById('menu-icon').setAttribute('data-feather', 'x');
+                feather.replace();
             } else {
                 menu.classList.add('hidden');
+                // Возвращаем иконку меню
+                document.getElementById('menu-icon').setAttribute('data-feather', 'menu');
+                feather.replace();
             }
         }
         
         function closeMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.add('hidden');
-            
-            // Небольшая задержка чтобы убедиться, что скролл произошел
-            setTimeout(() => {
-                // Прокручиваем немного вверх если нужно, чтобы кнопка меню была видна
-                if (window.scrollY < 100) {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-                }
-            }, 100);
+            // Возвращаем иконку меню
+            document.getElementById('menu-icon').setAttribute('data-feather', 'menu');
+            feather.replace();
         }
         
         // Закрытие меню при клике вне его области
@@ -583,6 +629,14 @@
             if (!menu.classList.contains('hidden') && 
                 !menu.contains(event.target) && 
                 !menuButton.contains(event.target)) {
+                closeMobileMenu();
+            }
+        });
+        
+        // Закрытие меню при скролле
+        window.addEventListener('scroll', function() {
+            const menu = document.getElementById('mobile-menu');
+            if (!menu.classList.contains('hidden')) {
                 closeMobileMenu();
             }
         });
