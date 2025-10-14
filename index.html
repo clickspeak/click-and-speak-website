@@ -66,9 +66,9 @@
             to { opacity: 1; }
         }
         
-        /* ФИКС ДЛЯ МОБИЛЬНОГО МЕНЮ */
+        /* ВЫСШИЙ УРОВЕНЬ - ФИКС ДЛЯ МОБИЛЬНОГО МЕНЮ */
         @media (max-width: 768px) {
-            /* Фиксированная кнопка меню которая всегда доступна */
+            /* Супер-кнопка меню с максимальным приоритетом */
             #menu-button {
                 position: fixed !important;
                 top: 1rem !important;
@@ -76,32 +76,69 @@
                 background: white !important;
                 border: 2px solid #3B82F6 !important;
                 border-radius: 8px !important;
-                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+                box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4) !important;
                 padding: 12px !important;
-                z-index: 1001 !important;
-                width: 48px !important;
-                height: 48px !important;
+                z-index: 9999 !important; /* Максимальный z-index */
+                width: 50px !important;
+                height: 50px !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
+                cursor: pointer !important;
+                transition: all 0.3s ease !important;
+            }
+            
+            /* Эффект при наведении */
+            #menu-button:hover {
+                transform: scale(1.05) !important;
+                box-shadow: 0 6px 25px rgba(59, 130, 246, 0.6) !important;
+            }
+            
+            /* Активное состояние */
+            #menu-button:active {
+                transform: scale(0.95) !important;
+            }
+            
+            /* Гарантируем что НИЧТО не перекроет кнопку */
+            #menu-button::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 80px;
+                height: 80px;
+                z-index: 9998;
+                pointer-events: none;
             }
             
             /* Освободи место для кнопки в навигации */
             nav .flex.items-center.space-x-2 {
-                margin-right: 70px;
-                min-height: 48px;
+                margin-right: 80px !important;
+                min-height: 50px;
             }
             
-            /* Убедись что навигация не перекрывает */
+            /* Навигация */
             nav {
                 position: relative;
-                z-index: 999;
+                z-index: 100;
             }
             
-            /* Мобильное меню под кнопкой */
+            /* Мобильное меню */
             #mobile-menu {
-                z-index: 998;
-                top: 80px;
+                z-index: 9990;
+                top: 85px;
+                animation: slideDown 0.3s ease-out;
+            }
+            
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
             
             /* Увеличиваем отступ для якорных ссылок на мобильных */
@@ -112,16 +149,18 @@
             section {
                 scroll-margin-top: 6rem;
             }
+            
+            /* Гарантируем что контент не перекрывает */
+            .hero-gradient,
+            section {
+                position: relative;
+                z-index: 1;
+            }
         }
         
-        /* Гарантируем, что навигация всегда поверх контента */
+        /* Десктопная навигация */
         nav {
             z-index: 1000;
-        }
-        
-        /* Мобильное меню с высоким z-index */
-        #mobile-menu {
-            z-index: 999;
         }
     </style>
 </head>
@@ -143,7 +182,7 @@
                     <a href="#contact" class="bg-primary text-white px-6 py-2 rounded-full hover:bg-blue-600 transition">Free Lesson</a>
                 </div>
                 
-                <button class="md:hidden p-2 rounded-md focus:outline-none" onclick="toggleMobileMenu()" id="menu-button">
+                <button class="md:hidden rounded-md focus:outline-none transition-all duration-300" onclick="toggleMobileMenu()" id="menu-button">
                     <i data-feather="menu" id="menu-icon"></i>
                 </button>
             </div>
@@ -153,11 +192,11 @@
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="md:hidden bg-white py-4 px-6 shadow-lg hidden absolute top-20 left-0 right-0 z-40">
         <div class="flex flex-col space-y-4">
-            <a href="#about" class="text-gray-600 hover:text-primary transition py-2" onclick="closeMobileMenu()">About</a>
-            <a href="#method" class="text-gray-600 hover:text-primary transition py-2" onclick="closeMobileMenu()">Method</a>
-            <a href="#courses" class="text-gray-600 hover:text-primary transition py-2" onclick="closeMobileMenu()">Courses</a>
-            <a href="#testimonials" class="text-gray-600 hover:text-primary transition py-2" onclick="closeMobileMenu()">Results</a>
-            <a href="#contact" class="bg-primary text-white px-6 py-2 rounded-full hover:bg-blue-600 transition text-center" onclick="closeMobileMenu()">Free Lesson</a>
+            <a href="#about" class="text-gray-600 hover:text-primary transition py-2 text-lg font-medium" onclick="closeMobileMenu()">About</a>
+            <a href="#method" class="text-gray-600 hover:text-primary transition py-2 text-lg font-medium" onclick="closeMobileMenu()">Method</a>
+            <a href="#courses" class="text-gray-600 hover:text-primary transition py-2 text-lg font-medium" onclick="closeMobileMenu()">Courses</a>
+            <a href="#testimonials" class="text-gray-600 hover:text-primary transition py-2 text-lg font-medium" onclick="closeMobileMenu()">Results</a>
+            <a href="#contact" class="bg-primary text-white px-6 py-3 rounded-full hover:bg-blue-600 transition text-center text-lg font-medium" onclick="closeMobileMenu()">Free Lesson</a>
         </div>
     </div>
 
@@ -595,30 +634,41 @@
         // Set current year
         document.getElementById('current-year').textContent = new Date().getFullYear();
         
-        // Mobile menu functions
+        // Mobile menu functions - ПРОФЕССИОНАЛЬНАЯ РЕАЛИЗАЦИЯ
+        let menuOpen = false;
+        
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
-            const isHidden = menu.classList.contains('hidden');
+            const menuIcon = document.getElementById('menu-icon');
             
-            if (isHidden) {
+            if (!menuOpen) {
+                // Открываем меню
                 menu.classList.remove('hidden');
-                // Меняем иконку на крестик
-                document.getElementById('menu-icon').setAttribute('data-feather', 'x');
-                feather.replace();
+                menuIcon.setAttribute('data-feather', 'x');
+                menuOpen = true;
             } else {
+                // Закрываем меню
                 menu.classList.add('hidden');
-                // Возвращаем иконку меню
-                document.getElementById('menu-icon').setAttribute('data-feather', 'menu');
-                feather.replace();
+                menuIcon.setAttribute('data-feather', 'menu');
+                menuOpen = false;
             }
+            feather.replace();
         }
         
         function closeMobileMenu() {
             const menu = document.getElementById('mobile-menu');
+            const menuIcon = document.getElementById('menu-icon');
+            
             menu.classList.add('hidden');
-            // Возвращаем иконку меню
-            document.getElementById('menu-icon').setAttribute('data-feather', 'menu');
+            menuIcon.setAttribute('data-feather', 'menu');
+            menuOpen = false;
             feather.replace();
+            
+            // Гарантируем что кнопка остается кликабельной
+            setTimeout(() => {
+                const menuButton = document.getElementById('menu-button');
+                menuButton.style.pointerEvents = 'auto';
+            }, 100);
         }
         
         // Закрытие меню при клике вне его области
@@ -626,20 +676,25 @@
             const menu = document.getElementById('mobile-menu');
             const menuButton = document.getElementById('menu-button');
             
-            if (!menu.classList.contains('hidden') && 
-                !menu.contains(event.target) && 
-                !menuButton.contains(event.target)) {
+            if (menuOpen && !menu.contains(event.target) && !menuButton.contains(event.target)) {
                 closeMobileMenu();
             }
         });
         
         // Закрытие меню при скролле
         window.addEventListener('scroll', function() {
-            const menu = document.getElementById('mobile-menu');
-            if (!menu.classList.contains('hidden')) {
+            if (menuOpen) {
                 closeMobileMenu();
             }
         });
+        
+        // Защита от потери кликабельности
+        document.addEventListener('touchstart', function(event) {
+            const menuButton = document.getElementById('menu-button');
+            if (menuButton.contains(event.target)) {
+                event.stopPropagation();
+            }
+        }, { passive: true });
         
         // Form handling
         document.getElementById('contact-form').addEventListener('submit', function(e) {
