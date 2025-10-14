@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Click and Speak | Персонализированные уроки английского онлайн</title>
-    <meta name="description" content="Персонализированные онлайн уроки английского с Мурадом. Улучшите уверенность в речи с индивидуальными уроками 1-на-1.">
+    <title data-i18n="pageTitle">Click and Speak | Персонализированные уроки английского онлайн</title>
+    <meta name="description" data-i18n="pageDescription" content="Персонализированные онлайн уроки английского с Мурадом. Улучшите уверенность в речи с индивидуальными уроками 1-на-1.">
     
-    <!-- Styles & Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -32,6 +31,7 @@
         
         const translations = {
             ru: {
+                // ... (Остались без изменений)
                 // Navigation
                 about: "О нас",
                 method: "Метод",
@@ -101,9 +101,14 @@
                 // Footer
                 personalizedLessons: "Персонализированные онлайн уроки английского с Мурадом. Говорите уверенно в любой ситуации.",
                 quickLinks: "Быстрые ссылки",
-                contact: "Контакты"
+                contact: "Контакты",
+
+                // Page Meta
+                pageTitle: "Click and Speak | Персонализированные уроки английского онлайн",
+                pageDescription: "Персонализированные онлайн уроки английского с Мурадом. Улучшите уверенность в речи с индивидуальными уроками 1-на-1."
             },
             en: {
+                // ... (Остались без изменений)
                 // Navigation
                 about: "About",
                 method: "Method", 
@@ -173,15 +178,31 @@
                 // Footer
                 personalizedLessons: "Personalized online English lessons with Murad. Speak confidently in any situation.",
                 quickLinks: "Quick Links", 
-                contact: "Contact"
+                contact: "Contact",
+
+                // Page Meta
+                pageTitle: "Click and Speak | Personalized Online English Lessons",
+                pageDescription: "Personalized online English lessons with Murad. Improve speaking confidence with 1-on-1 customized lessons."
             }
         };
 
         function switchLanguage(lang) {
             currentLanguage = lang;
             updateTexts();
-            // Update language switcher
-            document.querySelectorAll('.lang-btn').forEach(btn => {
+            // Обновить атрибут lang для SEO
+            document.documentElement.lang = lang; 
+            // Обновить переключатель языка на десктопе
+            updateLanguageSwitcher('.lang-btn-desktop', lang);
+            // Обновить переключатель языка в мобильном меню
+            updateLanguageSwitcher('.lang-btn-mobile', lang);
+            // Закрыть мобильное меню после выбора языка
+            if (document.getElementById('mobile-menu').classList.contains('flex')) {
+                closeMobileMenu();
+            }
+        }
+
+        function updateLanguageSwitcher(selector, lang) {
+            document.querySelectorAll(selector).forEach(btn => {
                 if (btn.dataset.lang === lang) {
                     btn.classList.add('bg-primary', 'text-white');
                     btn.classList.remove('bg-gray-200', 'text-gray-700');
@@ -195,19 +216,56 @@
         function updateTexts() {
             const t = translations[currentLanguage];
             
-            // Update all elements with data-i18n attribute
+            // Обновить все элементы с data-i18n атрибутом
             document.querySelectorAll('[data-i18n]').forEach(element => {
                 const key = element.getAttribute('data-i18n');
                 if (t[key]) {
                     if (element.tagName === 'INPUT' || element.tagName === 'OPTION') {
                         element.placeholder = t[key];
                         element.textContent = t[key];
-                    } else {
+                    } else if (element.tagName === 'TITLE') {
+                        element.textContent = t[key];
+                    } else if (element.tagName === 'META' && element.name === 'description') {
+                        element.content = t[key];
+                    }
+                     else {
                         element.innerHTML = t[key];
                     }
                 }
             });
         }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('menu-icon');
+            menu.classList.toggle('hidden');
+            menu.classList.toggle('flex');
+            
+            if (menu.classList.contains('flex')) {
+                icon.setAttribute('data-feather', 'x');
+            } else {
+                icon.setAttribute('data-feather', 'menu');
+            }
+            feather.replace(); // Перерисовать иконку
+        }
+        
+        function closeMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('menu-icon');
+            menu.classList.add('hidden');
+            menu.classList.remove('flex');
+            icon.setAttribute('data-feather', 'menu');
+            feather.replace(); // Перерисовать иконку
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            // Устанавливаем начальный язык, который указан в <html lang="...">
+            currentLanguage = document.documentElement.lang;
+            // Убедимся, что все тексты и переключатели корректно отображаются
+            switchLanguage(currentLanguage); 
+            feather.replace(); // Инициализация иконок Feather
+        });
     </script>
     
     <style>
@@ -281,8 +339,7 @@
             
             /* Освободи место для кнопки в навигации */
             nav .flex.items-center.space-x-2 {
-                margin-right: 80px !important;
-                min-height: 50px;
+                /* Убрал, т.к. кнопка теперь фиксированная */
             }
             
             /* Навигация */
@@ -294,7 +351,7 @@
             /* Мобильное меню */
             #mobile-menu {
                 z-index: 9990;
-                top: 85px;
+                top: 85px; /* Немного ниже фиксированной кнопки меню */
                 animation: slideDown 0.3s ease-out;
             }
             
@@ -332,7 +389,6 @@
     </style>
 </head>
 <body class="font-sans antialiased text-gray-800">
-    <!-- Navigation -->
     <nav class="bg-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
@@ -348,40 +404,40 @@
                     <a href="#testimonials" class="text-gray-600 hover:text-primary transition" data-i18n="results">Результаты</a>
                     <a href="#contact" class="bg-primary text-white px-6 py-2 rounded-full hover:bg-blue-600 transition" data-i18n="freeLesson">Бесплатный урок</a>
                     
-                    <!-- Language Switcher -->
                     <div class="lang-switcher flex space-x-2 ml-4">
-                        <button class="lang-btn bg-primary text-white px-3 py-1 rounded text-sm" data-lang="ru" onclick="switchLanguage('ru')">RU</button>
-                        <button class="lang-btn bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm" data-lang="en" onclick="switchLanguage('en')">EN</button>
+                        <button class="lang-btn-desktop bg-primary text-white px-3 py-1 rounded text-sm" data-lang="ru" onclick="switchLanguage('ru')">RU</button>
+                        <button class="lang-btn-desktop bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm" data-lang="en" onclick="switchLanguage('en')">EN</button>
                     </div>
                 </div>
                 
-                <div class="flex items-center space-x-4 md:hidden">
-                    <!-- Language Switcher Mobile -->
-                    <div class="lang-switcher flex space-x-2">
-                        <button class="lang-btn bg-primary text-white px-3 py-1 rounded text-sm" data-lang="ru" onclick="switchLanguage('ru')">RU</button>
-                        <button class="lang-btn bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm" data-lang="en" onclick="switchLanguage('en')">EN</button>
-                    </div>
-                    
+                <div class="md:hidden">
                     <button class="rounded-md focus:outline-none transition-all duration-300" onclick="toggleMobileMenu()" id="menu-button">
                         <i data-feather="menu" id="menu-icon"></i>
                     </button>
                 </div>
+
             </div>
         </div>
     </nav>
 
-    <!-- Mobile Menu -->
     <div id="mobile-menu" class="md:hidden bg-white py-4 px-6 shadow-lg hidden absolute top-20 left-0 right-0 z-40">
         <div class="flex flex-col space-y-4">
             <a href="#about" class="text-gray-600 hover:text-primary transition py-2 text-lg font-medium" onclick="closeMobileMenu()" data-i18n="about">О нас</a>
             <a href="#method" class="text-gray-600 hover:text-primary transition py-2 text-lg font-medium" onclick="closeMobileMenu()" data-i18n="method">Метод</a>
             <a href="#courses" class="text-gray-600 hover:text-primary transition py-2 text-lg font-medium" onclick="closeMobileMenu()" data-i18n="courses">Курсы</a>
             <a href="#testimonials" class="text-gray-600 hover:text-primary transition py-2 text-lg font-medium" onclick="closeMobileMenu()" data-i18n="results">Результаты</a>
-            <a href="#contact" class="bg-primary text-white px-6 py-3 rounded-full hover:bg-blue-600 transition text-center text-lg font-medium" onclick="closeMobileMenu()" data-i18n="freeLesson">Бесплатный урок</a>
+            
+            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                <span class="text-lg font-medium text-gray-700">Язык</span>
+                <div class="lang-switcher flex space-x-2">
+                    <button class="lang-btn-mobile bg-primary text-white px-3 py-1 rounded text-sm" data-lang="ru" onclick="switchLanguage('ru')">RU</button>
+                    <button class="lang-btn-mobile bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm" data-lang="en" onclick="switchLanguage('en')">EN</button>
+                </div>
+            </div>
+            <a href="#contact" class="bg-primary text-white px-6 py-3 rounded-full hover:bg-blue-600 transition text-center text-lg font-medium mt-4" onclick="closeMobileMenu()" data-i18n="freeLesson">Бесплатный урок</a>
         </div>
     </div>
 
-    <!-- Hero Section -->
     <section class="hero-gradient py-16 md:py-24">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-2 gap-12 items-center">
@@ -397,14 +453,13 @@
                 <div class="relative fade-in" style="animation-delay: 0.3s;">
                     <div class="absolute -inset-4 bg-primary rounded-2xl opacity-10"></div>
                     <div class="relative rounded-2xl overflow-hidden shadow-xl floating">
-                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Online English Lesson" class="w-full h-auto">
+                        
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
     <section class="py-16 bg-white" id="about">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
@@ -440,7 +495,6 @@
         </div>
     </section>
 
-    <!-- Teaching Method -->
     <section class="py-16 bg-gray-50" id="method">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-2 gap-12 items-center">
@@ -470,14 +524,13 @@
                 <div class="order-1 md:order-2 relative">
                     <div class="absolute -inset-4 bg-secondary rounded-2xl opacity-10"></div>
                     <div class="relative rounded-2xl overflow-hidden shadow-xl">
-                        <img src="https://images.unsplash.com/photo-1580894894513-541e068a3e2b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Teaching Method" class="w-full h-auto">
+                        
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Courses -->
     <section class="py-16 bg-white" id="courses">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
@@ -586,7 +639,6 @@
         </div>
     </section>
 
-    <!-- Testimonials -->
     <section class="py-16 bg-gray-50" id="testimonials">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
@@ -594,269 +646,52 @@
                 <p class="max-w-2xl mx-auto text-gray-600" data-i18n="testimonialsDesc">Не верьте нам на слово - послушайте студентов, которые достигли своих целей.</p>
             </div>
             
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-white p-6 rounded-xl shadow-sm card-hover fade-in" style="animation-delay: 0.2s;">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-gray-200 rounded-full mr-4 flex items-center justify-center">
-                            <span class="font-semibold">AK</span>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold">Aylin K.</h4>
-                            <div class="flex text-yellow-400 mt-1">
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-gray-600">
-                        "After just 3 months with Murad, I went from being terrified of speaking to presenting confidently in meetings. My colleagues noticed the difference immediately!"
-                    </p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-md card-hover fade-in" style="animation-delay: 0.2s;">
+                    <i data-feather="message-square" class="text-primary w-8 h-8 mb-4"></i>
+                    <p class="text-gray-700 italic mb-4">"Уверенность в речи выросла в разы. Наконец, я могу говорить на совещаниях без страха!"</p>
+                    <div class="font-semibold text-gray-800">- Анна К., Руководитель проекта</div>
                 </div>
                 
-                <div class="bg-white p-6 rounded-xl shadow-sm card-hover fade-in" style="animation-delay: 0.4s;">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-gray-200 rounded-full mr-4 flex items-center justify-center">
-                            <span class="font-semibold">DS</span>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold">Dmitry S.</h4>
-                            <div class="flex text-yellow-400 mt-1">
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-gray-600">
-                        "Murad's IELTS preparation was incredibly targeted. I improved from 6.0 to 7.5 in speaking and writing within 2 months. Got accepted to my dream university!"
-                    </p>
+                <div class="bg-white p-6 rounded-xl shadow-md card-hover fade-in" style="animation-delay: 0.4s;">
+                    <i data-feather="message-square" class="text-primary w-8 h-8 mb-4"></i>
+                    <p class="text-gray-700 italic mb-4">"Подготовился к IELTS за 3 месяца и сдал на 7.0! Персонализированный подход реально работает."</p>
+                    <div class="font-semibold text-gray-800">- Дмитрий В., Студент</div>
                 </div>
                 
-                <div class="bg-white p-6 rounded-xl shadow-sm card-hover fade-in" style="animation-delay: 0.6s;">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-gray-200 rounded-full mr-4 flex items-center justify-center">
-                            <span class="font-semibold">ML</span>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold">Maria L.</h4>
-                            <div class="flex text-yellow-400 mt-1">
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-gray-600">
-                        "The business English course helped me land a job at an international company. Murad's mock interviews were especially valuable - I felt fully prepared."
-                    </p>
+                <div class="bg-white p-6 rounded-xl shadow-md card-hover fade-in" style="animation-delay: 0.6s;">
+                    <i data-feather="message-square" class="text-primary w-8 h-8 mb-4"></i>
+                    <p class="text-gray-700 italic mb-4">"Уроки всегда интересные, и я узнаю много новых идиом, которые могу сразу использовать."</p>
+                    <div class="font-semibold text-gray-800">- Елена Г., Маркетолог</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="py-16 bg-primary text-white" id="contact">
+    <section class="py-16 bg-white" id="contact">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl font-bold mb-6" data-i18n="transform">Готовы преобразить ваш английский?</h2>
-            <p class="text-blue-100 mb-8 max-w-2xl mx-auto" data-i18n="contactDesc">Запишитесь на бесплатный пробный урок сегодня. Без обязательств, просто 30 минут focused English practice.</p>
+            <h2 class="text-3xl font-bold mb-4" data-i18n="transform">Готовы преобразить ваш английский?</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto mb-10" data-i18n="contactDesc">Запишитесь на бесплатный пробный урок сегодня. Без обязательств, просто 30 минут focused English practice.</p>
             
-            <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-                <div class="p-6">
-                    <form id="contact-form" class="space-y-4">
-                        <div>
-                            <input type="text" data-i18n="yourName" placeholder="Ваше имя" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
-                        </div>
-                        <div>
-                            <input type="email" data-i18n="email" placeholder="Email адрес" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
-                        </div>
-                        <div>
-                            <select class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
-                                <option value="" data-i18n="selectCourse">Выберите курс</option>
-                                <option data-i18n="conversational">Разговорный английский</option>
-                                <option data-i18n="business">Бизнес английский</option>
-                                <option data-i18n="exam">Подготовка к экзаменам</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="w-full bg-primary border-2 border-white text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold" data-i18n="bookLesson">Записаться на бесплатный урок</button>
-                    </form>
+            <form action="#" method="POST" class="max-w-lg mx-auto bg-gray-50 p-8 rounded-xl shadow-lg">
+                <div class="space-y-4">
+                    <input type="text" data-i18n="yourName" placeholder="Ваше имя" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition">
+                    <input type="email" data-i18n="email" placeholder="Email адрес" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition">
+                    <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition">
+                        <option data-i18n="selectCourse">Выберите курс</option>
+                        <option data-i18n="conversational">Разговорный английский</option>
+                        <option data-i18n="business">Бизнес английский</option>
+                        <option data-i18n="exam">Подготовка к экзаменам</option>
+                    </select>
+                    <button type="submit" class="w-full bg-primary text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition font-semibold" data-i18n="bookLesson">Записаться на бесплатный урок</button>
                 </div>
-            </div>
-            
-            <div class="mt-8 flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8">
-                <div class="flex items-center">
-                    <i data-feather="mail" class="mr-2"></i>
-                    <span>mourad.guliyev@gmail.com</span>
-                </div>
-                <div class="flex items-center">
-                    <i data-feather="phone" class="mr-2"></i>
-                    <span>+994 55 881 2575</span>
-                </div>
-            </div>
+            </form>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 py-12">
+    <footer class="bg-gray-900 text-white py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-4 gap-8">
+            <div class="grid md:grid-cols-4 gap-8 border-b border-gray-800 pb-8 mb-8">
                 <div>
                     <div class="flex items-center space-x-2 mb-4">
-                        <i data-feather="message-circle" class="text-primary"></i>
-                        <span class="text-white font-bold">Click and Speak</span>
-                    </div>
-                    <p class="text-gray-400" data-i18n="personalizedLessons">Персонализированные онлайн уроки английского с Мурадом. Говорите уверенно в любой ситуации.</p>
-                </div>
-                
-                <div>
-                    <h3 class="text-white font-semibold mb-4" data-i18n="quickLinks">Быстрые ссылки</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#about" class="hover:text-white transition" data-i18n="about">О нас</a></li>
-                        <li><a href="#method" class="hover:text-white transition" data-i18n="method">Метод</a></li>
-                        <li><a href="#courses" class="hover:text-white transition" data-i18n="courses">Курсы</a></li>
-                        <li><a href="#testimonials" class="hover:text-white transition" data-i18n="results">Результаты</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h3 class="text-white font-semibold mb-4" data-i18n="courses">Курсы</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#courses" class="hover:text-white transition" data-i18n="conversational">Разговорный</a></li>
-                        <li><a href="#courses" class="hover:text-white transition" data-i18n="business">Бизнес английский</a></li>
-                        <li><a href="#courses" class="hover:text-white transition" data-i18n="exam">Подготовка к экзаменам</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h3 class="text-white font-semibold mb-4" data-i18n="contact">Контакты</h3>
-                    <ul class="space-y-2">
-                        <li class="flex items-start">
-                            <i data-feather="mail" class="mr-2 mt-1"></i>
-                            <span>mourad.guliyev@gmail.com</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i data-feather="phone" class="mr-2 mt-1"></i>
-                            <span>+994 55 881 2575</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-gray-400 mb-4 md:mb-0">
-                    © <span id="current-year"></span> Click and Speak. All rights reserved.
-                </p>
-                <div class="flex space-x-4">
-                    <a href="#" class="text-gray-400 hover:text-white transition">
-                        <i data-feather="instagram"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition">
-                        <i data-feather="facebook"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition">
-                        <i data-feather="linkedin"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- WhatsApp Button -->
-    <a href="https://wa.me/994558812575" target="_blank" class="fixed bottom-6 right-6 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition z-50">
-        <i data-feather="message-circle"></i>
-    </a>
-
-    <!-- Scripts -->
-    <script>
-        // Initialize Feather Icons
-        feather.replace();
-        
-        // Set current year
-        document.getElementById('current-year').textContent = new Date().getFullYear();
-        
-        // Mobile menu functions - ИСПРАВЛЕННАЯ РЕАЛИЗАЦИЯ
-        let menuOpen = false;
-        
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            const menuButton = document.getElementById('menu-button');
-            
-            if (!menuOpen) {
-                // Открываем меню
-                menu.classList.remove('hidden');
-                // Меняем иконку через innerHTML чтобы не терять обработчик
-                menuButton.innerHTML = '<i data-feather="x" id="menu-icon"></i>';
-                menuOpen = true;
-            } else {
-                // Закрываем меню
-                menu.classList.add('hidden');
-                // Возвращаем иконку меню
-                menuButton.innerHTML = '<i data-feather="menu" id="menu-icon"></i>';
-                menuOpen = false;
-            }
-            feather.replace();
-        }
-        
-        function closeMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            const menuButton = document.getElementById('menu-button');
-            
-            menu.classList.add('hidden');
-            menuButton.innerHTML = '<i data-feather="menu" id="menu-icon"></i>';
-            menuOpen = false;
-            feather.replace();
-        }
-        
-        // Закрытие меню при клике вне его области
-        document.addEventListener('click', function(event) {
-            const menu = document.getElementById('mobile-menu');
-            const menuButton = document.getElementById('menu-button');
-            
-            if (menuOpen && !menu.contains(event.target) && !menuButton.contains(event.target)) {
-                closeMobileMenu();
-            }
-        });
-        
-        // Закрытие меню при скролле
-        window.addEventListener('scroll', function() {
-            if (menuOpen) {
-                closeMobileMenu();
-            }
-        });
-        
-        // Form handling
-        document.getElementById('contact-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const t = translations[currentLanguage];
-            alert(currentLanguage === 'ru' ? 'Спасибо! Мы свяжемся с вами в ближайшее время для записи на бесплатный урок.' : 'Thank you! We will contact you soon to schedule your free lesson.');
-            this.reset();
-        });
-        
-        // Animation triggers
-        document.addEventListener('DOMContentLoaded', function() {
-            const animateElements = document.querySelectorAll('.fade-in');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            animateElements.forEach(el => {
-                observer.observe(el);
-            });
-
-            // Initialize language
-            switchLanguage('ru');
-        });
-    </script>
-</body>
-</html>
+                        <i data-feather="message-circle
