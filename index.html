@@ -1,724 +1,126 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Click and Speak | Personalized Online English Lessons</title>
-    <meta name="description" content="Personalized online English lessons with Murad. Improve your speaking confidence with 1-on-1 tailored lessons.">
-    
-    <!-- Styles & Scripts -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/feather-icons"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#3B82F6',
-                        secondary: '#10B981',
-                        accent: '#F59E0B'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <style>
-        /* Плавная прокрутка с учетом навигации */
-        html {
-            scroll-behavior: smooth;
-            scroll-padding-top: 5rem;
-        }
-        
-        /* Отступ для всех секций при якорной навигации */
-        section {
-            scroll-margin-top: 5rem;
-        }
-        
-        .hero-gradient {
-            background: linear-gradient(135deg, #F0F9FF 0%, #EFF6FF 100%);
-        }
-        .floating {
-            animation: floating 6s ease-in-out infinite;
-        }
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        .fade-in {
-            opacity: 0;
-            animation: fadeIn 1s ease-in forwards;
-        }
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-        
-        /* ВЫСШИЙ УРОВЕНЬ - ФИКС ДЛЯ МОБИЛЬНОГО МЕНЮ */
-        @media (max-width: 768px) {
-            /* Супер-кнопка меню с максимальным приоритетом */
-            #menu-button {
-                position: fixed !important;
-                top: 1rem !important;
-                right: 1rem !important;
-                background: white !important;
-                border: 2px solid #3B82F6 !important;
-                border-radius: 8px !important;
-                box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4) !important;
-                padding: 12px !important;
-                z-index: 9999 !important; /* Максимальный z-index */
-                width: 50px !important;
-                height: 50px !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                cursor: pointer !important;
-                transition: all 0.3s ease !important;
-            }
-            
-            /* Эффект при наведении */
-            #menu-button:hover {
-                transform: scale(1.05) !important;
-                box-shadow: 0 6px 25px rgba(59, 130, 246, 0.6) !important;
-            }
-            
-            /* Активное состояние */
-            #menu-button:active {
-                transform: scale(0.95) !important;
-            }
-            
-            /* Гарантируем что НИЧТО не перекроет кнопку */
-            #menu-button::before {
-                content: '';
-                position: fixed;
-                top: 0;
-                right: 0;
-                width: 80px;
-                height: 80px;
-                z-index: 9998;
-                pointer-events: none;
-            }
-            
-            /* Освободи место для кнопки в навигации */
-            nav .flex.items-center.space-x-2 {
-                margin-right: 80px !important;
-                min-height: 50px;
-            }
-            
-            /* Навигация */
-            nav {
-                position: relative;
-                z-index: 100;
-            }
-            
-            /* Мобильное меню */
-            #mobile-menu {
-                z-index: 9990;
-                top: 85px;
-                animation: slideDown 0.3s ease-out;
-            }
-            
-            @keyframes slideDown {
-                from {
-                    opacity: 0;
-                    transform: translateY(-10px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-            
-            /* Увеличиваем отступ для якорных ссылок на мобильных */
-            html {
-                scroll-padding-top: 6rem;
-            }
-            
-            section {
-                scroll-margin-top: 6rem;
-            }
-            
-            /* Гарантируем что контент не перекрывает */
-            .hero-gradient,
-            section {
-                position: relative;
-                z-index: 1;
-            }
-        }
-        
-        /* Десктопная навигация */
-        nav {
-            z-index: 1000;
-        }
-    </style>
-</head>
-<body class="font-sans antialiased text-gray-800">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20 items-center">
-                <div class="flex items-center space-x-2">
-                    <i data-feather="message-circle" class="text-primary h-8 w-8"></i>
-                    <span class="text-xl font-bold text-gray-900">Click and Speak</span>
-                </div>
-                
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="#about" class="text-gray-600 hover:text-primary transition">About</a>
-                    <a href="#method" class="text-gray-600 hover:text-primary transition">Method</a>
-                    <a href="#courses" class="text-gray-600 hover:text-primary transition">Courses</a>
-                    <a href="#testimonials" class="text-gray-600 hover:text-primary transition">Results</a>
-                    <a href="#contact" class="bg-primary text-white px-6 py-2 rounded-full hover:bg-blue-600 transition">Free Lesson</a>
-                </div>
-                
-                <button class="md:hidden rounded-md focus:outline-none transition-all duration-300" onclick="toggleMobileMenu()" id="menu-button">
-                    <i data-feather="menu" id="menu-icon"></i>
-                </button>
-            </div>
+<!-- Courses -->
+<section class="py-12 md:py-16 bg-white" id="courses">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12 md:mb-16">
+            <h2 class="text-2xl md:text-3xl font-bold mb-3 md:mb-4">Course Options</h2>
+            <p class="text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-4">
+                Flexible programs designed for different needs and schedules.
+            </p>
         </div>
-    </nav>
-
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="md:hidden bg-white py-4 px-6 shadow-lg hidden absolute top-20 left-0 right-0 z-40">
-        <div class="flex flex-col space-y-4">
-            <a href="#about" class="text-gray-600 hover:text-primary transition py-2 text-lg font-medium" onclick="closeMobileMenu()">About</a>
-            <a href="#method" class="text-gray-600 hover:text-primary transition py-2 text-lg font-medium" onclick="closeMobileMenu()">Method</a>
-            <a href="#courses" class="text-gray-600 hover:text-primary transition py-2 text-lg font-medium" onclick="closeMobileMenu()">Courses</a>
-            <a href="#testimonials" class="text-gray-600 hover:text-primary transition py-2 text-lg font-medium" onclick="closeMobileMenu()">Results</a>
-            <a href="#contact" class="bg-primary text-white px-6 py-3 rounded-full hover:bg-blue-600 transition text-center text-lg font-medium" onclick="closeMobileMenu()">Free Lesson</a>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
+            <!-- Conversational English -->
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 card-hover">
+                <div class="p-6 md:p-8">
+                    <div class="mb-6">
+                        <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-2">Conversational English</h3>
+                        <p class="text-gray-600 text-sm md:text-base mb-4">Build fluency for daily life</p>
+                        <div class="flex items-baseline">
+                            <span class="text-2xl md:text-3xl font-bold text-gray-900">$25</span>
+                            <span class="text-gray-500 ml-2 text-sm md:text-base">/lesson</span>
+                        </div>
+                    </div>
+                    
+                    <ul class="space-y-3 md:space-y-4 mb-6 md:mb-8">
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-primary mr-3 mt-1 flex-shrink-0 w-4 h-4 md:w-5 md:h-5"></i>
+                            <span class="text-gray-700 text-sm md:text-base">Everyday vocabulary & phrases</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-primary mr-3 mt-1 flex-shrink-0 w-4 h-4 md:w-5 md:h-5"></i>
+                            <span class="text-gray-700 text-sm md:text-base">Idioms & natural expressions</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-primary mr-3 mt-1 flex-shrink-0 w-4 h-4 md:w-5 md:h-5"></i>
+                            <span class="text-gray-700 text-sm md:text-base">Pronunciation practice</span>
+                        </li>
+                    </ul>
+                    
+                    <a href="#contact" class="block w-full bg-primary text-white text-center py-3 md:py-4 rounded-xl hover:bg-blue-600 transition duration-200 font-semibold text-sm md:text-base">
+                        Start Learning
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Business English -->
+            <div class="bg-white border-2 border-primary rounded-2xl shadow-lg relative transform md:scale-105 card-hover">
+                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <span class="bg-primary text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg">
+                        MOST POPULAR
+                    </span>
+                </div>
+                
+                <div class="p-6 md:p-8">
+                    <div class="mb-6">
+                        <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-2">Business English</h3>
+                        <p class="text-gray-600 text-sm md:text-base mb-4">Excel in professional settings</p>
+                        <div class="flex items-baseline">
+                            <span class="text-2xl md:text-3xl font-bold text-gray-900">$35</span>
+                            <span class="text-gray-500 ml-2 text-sm md:text-base">/lesson</span>
+                        </div>
+                    </div>
+                    
+                    <ul class="space-y-3 md:space-y-4 mb-6 md:mb-8">
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-primary mr-3 mt-1 flex-shrink-0 w-4 h-4 md:w-5 md:h-5"></i>
+                            <span class="text-gray-700 text-sm md:text-base">Meetings & presentations</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-primary mr-3 mt-1 flex-shrink-0 w-4 h-4 md:w-5 md:h-5"></i>
+                            <span class="text-gray-700 text-sm md:text-base">Business writing & emails</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-primary mr-3 mt-1 flex-shrink-0 w-4 h-4 md:w-5 md:h-5"></i>
+                            <span class="text-gray-700 text-sm md:text-base">Industry-specific terms</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-primary mr-3 mt-1 flex-shrink-0 w-4 h-4 md:w-5 md:h-5"></i>
+                            <span class="text-gray-700 text-sm md:text-base">Interview preparation</span>
+                        </li>
+                    </ul>
+                    
+                    <a href="#contact" class="block w-full bg-primary text-white text-center py-3 md:py-4 rounded-xl hover:bg-blue-600 transition duration-200 font-semibold text-sm md:text-base">
+                        Start Learning
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Exam Preparation -->
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 card-hover">
+                <div class="p-6 md:p-8">
+                    <div class="mb-6">
+                        <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-2">Exam Preparation</h3>
+                        <p class="text-gray-600 text-sm md:text-base mb-4">IELTS, TOEFL, Cambridge</p>
+                        <div class="flex items-baseline">
+                            <span class="text-2xl md:text-3xl font-bold text-gray-900">$30</span>
+                            <span class="text-gray-500 ml-2 text-sm md:text-base">/lesson</span>
+                        </div>
+                    </div>
+                    
+                    <ul class="space-y-3 md:space-y-4 mb-6 md:mb-8">
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-primary mr-3 mt-1 flex-shrink-0 w-4 h-4 md:w-5 md:h-5"></i>
+                            <span class="text-gray-700 text-sm md:text-base">Test strategies & techniques</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-primary mr-3 mt-1 flex-shrink-0 w-4 h-4 md:w-5 md:h-5"></i>
+                            <span class="text-gray-700 text-sm md:text-base">Full practice tests</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-primary mr-3 mt-1 flex-shrink-0 w-4 h-4 md:w-5 md:h-5"></i>
+                            <span class="text-gray-700 text-sm md:text-base">Writing evaluation</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-primary mr-3 mt-1 flex-shrink-0 w-4 h-4 md:w-5 md:h-5"></i>
+                            <span class="text-gray-700 text-sm md:text-base">Score improvement guarantee</span>
+                        </li>
+                    </ul>
+                    
+                    <a href="#contact" class="block w-full bg-primary text-white text-center py-3 md:py-4 rounded-xl hover:bg-blue-600 transition duration-200 font-semibold text-sm md:text-base">
+                        Start Learning
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
-
-    <!-- Hero Section -->
-    <section class="hero-gradient py-16 md:py-24">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div class="space-y-6 fade-in" style="animation-delay: 0.1s;">
-                    <h1 class="text-4xl md:text-5xl font-bold leading-tight">
-                        Speak English <span class="text-primary">Confidently</span> with Murad
-                    </h1>
-                    <p class="text-lg text-gray-600">
-                        Personalized 1-on-1 online lessons tailored to your goals. 
-                        Whether you need business English, exam preparation, or casual conversation.
-                    </p>
-                    <div class="flex flex-wrap gap-4">
-                        <a href="#contact" class="bg-primary text-white px-6 py-3 rounded-full hover:bg-blue-600 transition">
-                            Book Free Lesson
-                        </a>
-                        <a href="#courses" class="border border-primary text-primary px-6 py-3 rounded-full hover:bg-blue-50 transition">
-                            View Courses
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="relative fade-in" style="animation-delay: 0.3s;">
-                    <div class="absolute -inset-4 bg-primary rounded-2xl opacity-10"></div>
-                    <div class="relative rounded-2xl overflow-hidden shadow-xl floating">
-                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Online English Lesson" class="w-full h-auto">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="py-16 bg-white" id="about">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold mb-4">Why Learn With Murad?</h2>
-                <p class="max-w-2xl mx-auto text-gray-600">
-                    8+ years helping students worldwide achieve English fluency through personalized lessons.
-                </p>
-            </div>
-            
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-gray-50 p-8 rounded-xl card-hover fade-in" style="animation-delay: 0.2s;">
-                    <div class="w-16 h-16 bg-primary bg-opacity-10 rounded-full flex items-center justify-center mb-6">
-                        <i data-feather="users" class="text-primary w-8 h-8"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">Personalized Approach</h3>
-                    <p class="text-gray-600">
-                        Lessons tailored to your level, goals, and interests. No generic textbooks - just what you need.
-                    </p>
-                </div>
-                
-                <div class="bg-gray-50 p-8 rounded-xl card-hover fade-in" style="animation-delay: 0.4s;">
-                    <div class="w-16 h-16 bg-secondary bg-opacity-10 rounded-full flex items-center justify-center mb-6">
-                        <i data-feather="mic" class="text-secondary w-8 h-8"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">Speaking Focus</h3>
-                    <p class="text-gray-600">
-                        80% of each lesson is conversation practice. You'll speak more in one lesson than in a month of self-study.
-                    </p>
-                </div>
-                
-                <div class="bg-gray-50 p-8 rounded-xl card-hover fade-in" style="animation-delay: 0.6s;">
-                    <div class="w-16 h-16 bg-accent bg-opacity-10 rounded-full flex items-center justify-center mb-6">
-                        <i data-feather="award" class="text-accent w-8 h-8"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">Proven Results</h3>
-                    <p class="text-gray-600">
-                        Students have improved IELTS scores by 1.5 points on average after 12 lessons.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Teaching Method -->
-    <section class="py-16 bg-gray-50" id="method">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div class="order-2 md:order-1">
-                    <h2 class="text-3xl font-bold mb-6">The Whisper Method</h2>
-                    <p class="text-gray-600 mb-6">
-                        My unique approach focuses on building confidence through natural conversation while systematically improving accuracy.
-                    </p>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <i data-feather="check-circle" class="text-secondary mr-3 mt-1"></i>
-                            <span>Error correction in real-time without interrupting flow</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i data-feather="check-circle" class="text-secondary mr-3 mt-1"></i>
-                            <span>Vocabulary learned in context, not from lists</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i data-feather="check-circle" class="text-secondary mr-3 mt-1"></i>
-                            <span>Grammar explained through examples, not rules</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i data-feather="check-circle" class="text-secondary mr-3 mt-1"></i>
-                            <span>Personalized feedback after each lesson</span>
-                        </li>
-                    </ul>
-                </div>
-                
-                <div class="order-1 md:order-2 relative">
-                    <div class="absolute -inset-4 bg-secondary rounded-2xl opacity-10"></div>
-                    <div class="relative rounded-2xl overflow-hidden shadow-xl">
-                        <img src="https://images.unsplash.com/photo-1580894894513-541e068a3e2b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Teaching Method" class="w-full h-auto">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Courses -->
-    <section class="py-16 bg-white" id="courses">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold mb-4">Course Options</h2>
-                <p class="max-w-2xl mx-auto text-gray-600">
-                    Flexible programs designed for different needs and schedules.
-                </p>
-            </div>
-            
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="border border-gray-200 rounded-xl overflow-hidden card-hover fade-in" style="animation-delay: 0.2s;">
-                    <div class="bg-gray-100 p-6">
-                        <h3 class="text-xl font-semibold mb-2">Conversational English</h3>
-                        <p class="text-gray-600 mb-4">Build fluency for daily life</p>
-                        <div class="flex items-end">
-                            <span class="text-3xl font-bold">$25</span>
-                            <span class="text-gray-500 ml-2">/lesson</span>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <ul class="space-y-3 mb-6">
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-primary mr-2 mt-1"></i>
-                                <span>Everyday vocabulary</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-primary mr-2 mt-1"></i>
-                                <span>Idioms & slang</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-primary mr-2 mt-1"></i>
-                                <span>Pronunciation practice</span>
-                            </li>
-                        </ul>
-                        <a href="#contact" class="block w-full text-center bg-primary text-white py-2 rounded-lg hover:bg-blue-600 transition">
-                            Get Started
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="border border-gray-200 rounded-xl overflow-hidden card-hover transform scale-105 fade-in" style="animation-delay: 0.4s;">
-                    <div class="bg-primary text-white p-6">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="text-xl font-semibold mb-2">Business English</h3>
-                                <p class="text-blue-100 mb-4">Excel in professional settings</p>
-                            </div>
-                            <span class="bg-white text-primary text-xs font-bold px-3 py-1 rounded-full">Popular</span>
-                        </div>
-                        <div class="flex items-end">
-                            <span class="text-3xl font-bold">$35</span>
-                            <span class="text-blue-100 ml-2">/lesson</span>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <ul class="space-y-3 mb-6">
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-primary mr-2 mt-1"></i>
-                                <span>Meetings & presentations</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-primary mr-2 mt-1"></i>
-                                <span>Business writing</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-primary mr-2 mt-1"></i>
-                                <span>Industry-specific terms</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-primary mr-2 mt-1"></i>
-                                <span>Interview preparation</span>
-                            </li>
-                        </ul>
-                        <a href="#contact" class="block w-full text-center bg-primary text-white py-2 rounded-lg hover:bg-blue-600 transition">
-                            Get Started
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="border border-gray-200 rounded-xl overflow-hidden card-hover fade-in" style="animation-delay: 0.6s;">
-                    <div class="bg-gray-100 p-6">
-                        <h3 class="text-xl font-semibold mb-2">Exam Preparation</h3>
-                        <p class="text-gray-600 mb-4">IELTS, TOEFL, Cambridge</p>
-                        <div class="flex items-end">
-                            <span class="text-3xl font-bold">$30</span>
-                            <span class="text-gray-500 ml-2">/lesson</span>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <ul class="space-y-3 mb-6">
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-primary mr-2 mt-1"></i>
-                                <span>Test strategies</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-primary mr-2 mt-1"></i>
-                                <span>Practice tests</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-primary mr-2 mt-1"></i>
-                                <span>Writing evaluation</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i data-feather="check" class="text-primary mr-2 mt-1"></i>
-                                <span>Score guarantee</span>
-                            </li>
-                        </ul>
-                        <a href="#contact" class="block w-full text-center bg-primary text-white py-2 rounded-lg hover:bg-blue-600 transition">
-                            Get Started
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials -->
-    <section class="py-16 bg-gray-50" id="testimonials">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold mb-4">Student Success Stories</h2>
-                <p class="max-w-2xl mx-auto text-gray-600">
-                    Don't just take my word for it - hear from students who achieved their goals.
-                </p>
-            </div>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-white p-6 rounded-xl shadow-sm card-hover fade-in" style="animation-delay: 0.2s;">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-gray-200 rounded-full mr-4 flex items-center justify-center">
-                            <span class="font-semibold">AK</span>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold">Aylin K.</h4>
-                            <div class="flex text-yellow-400 mt-1">
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-gray-600">
-                        "After just 3 months with Murad, I went from being terrified of speaking to presenting confidently in meetings. My colleagues noticed the difference immediately!"
-                    </p>
-                </div>
-                
-                <div class="bg-white p-6 rounded-xl shadow-sm card-hover fade-in" style="animation-delay: 0.4s;">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-gray-200 rounded-full mr-4 flex items-center justify-center">
-                            <span class="font-semibold">DS</span>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold">Dmitry S.</h4>
-                            <div class="flex text-yellow-400 mt-1">
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-gray-600">
-                        "Murad's IELTS preparation was incredibly targeted. I improved from 6.0 to 7.5 in speaking and writing within 2 months. Got accepted to my dream university!"
-                    </p>
-                </div>
-                
-                <div class="bg-white p-6 rounded-xl shadow-sm card-hover fade-in" style="animation-delay: 0.6s;">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-gray-200 rounded-full mr-4 flex items-center justify-center">
-                            <span class="font-semibold">ML</span>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold">Maria L.</h4>
-                            <div class="flex text-yellow-400 mt-1">
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-gray-600">
-                        "The business English course helped me land a job at an international company. Murad's mock interviews were especially valuable - I felt fully prepared."
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="py-16 bg-primary text-white" id="contact">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl font-bold mb-6">Ready to Transform Your English?</h2>
-            <p class="text-blue-100 mb-8 max-w-2xl mx-auto">
-                Book your free trial lesson today. No obligation, just 30 minutes of focused English practice.
-            </p>
-            
-            <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-                <div class="p-6">
-                    <form id="contact-form" class="space-y-4">
-                        <div>
-                            <input type="text" placeholder="Your Name" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
-                        </div>
-                        <div>
-                            <input type="email" placeholder="Email Address" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
-                        </div>
-                        <div>
-                            <select class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
-                                <option value="">Select Course</option>
-                                <option>Conversational English</option>
-                                <option>Business English</option>
-                                <option>Exam Preparation</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="w-full bg-primary border-2 border-white text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold">
-                            Book Free Lesson
-                        </button>
-                    </form>
-                </div>
-            </div>
-            
-            <div class="mt-8 flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8">
-                <div class="flex items-center">
-                    <i data-feather="mail" class="mr-2"></i>
-                    <span>mourad.guliyev@gmail.com</span>
-                </div>
-                <div class="flex items-center">
-                    <i data-feather="phone" class="mr-2"></i>
-                    <span>+994 55 881 2575</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-4 gap-8">
-                <div>
-                    <div class="flex items-center space-x-2 mb-4">
-                        <i data-feather="message-circle" class="text-primary"></i>
-                        <span class="text-white font-bold">Click and Speak</span>
-                    </div>
-                    <p class="text-gray-400">
-                        Personalized online English lessons with Murad. Speak confidently in any situation.
-                    </p>
-                </div>
-                
-                <div>
-                    <h3 class="text-white font-semibold mb-4">Quick Links</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#about" class="hover:text-white transition">About</a></li>
-                        <li><a href="#method" class="hover:text-white transition">Method</a></li>
-                        <li><a href="#courses" class="hover:text-white transition">Courses</a></li>
-                        <li><a href="#testimonials" class="hover:text-white transition">Results</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h3 class="text-white font-semibold mb-4">Courses</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#courses" class="hover:text-white transition">Conversational</a></li>
-                        <li><a href="#courses" class="hover:text-white transition">Business English</a></li>
-                        <li><a href="#courses" class="hover:text-white transition">Exam Preparation</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h3 class="text-white font-semibold mb-4">Contact</h3>
-                    <ul class="space-y-2">
-                        <li class="flex items-start">
-                            <i data-feather="mail" class="mr-2 mt-1"></i>
-                            <span>mourad.guliyev@gmail.com</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i data-feather="phone" class="mr-2 mt-1"></i>
-                            <span>+994 55 881 2575</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-gray-400 mb-4 md:mb-0">
-                    © <span id="current-year"></span> Click and Speak. All rights reserved.
-                </p>
-                <div class="flex space-x-4">
-                    <a href="#" class="text-gray-400 hover:text-white transition">
-                        <i data-feather="instagram"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition">
-                        <i data-feather="facebook"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition">
-                        <i data-feather="linkedin"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- WhatsApp Button -->
-    <a href="https://wa.me/994558812575" target="_blank" class="fixed bottom-6 right-6 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition z-50">
-        <i data-feather="message-circle"></i>
-    </a>
-
-    <!-- Scripts -->
-    <script>
-        // Initialize Feather Icons
-        feather.replace();
-        
-        // Set current year
-        document.getElementById('current-year').textContent = new Date().getFullYear();
-        
-        // Mobile menu functions - ПРОФЕССИОНАЛЬНАЯ РЕАЛИЗАЦИЯ
-        let menuOpen = false;
-        
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            const menuIcon = document.getElementById('menu-icon');
-            
-            if (!menuOpen) {
-                // Открываем меню
-                menu.classList.remove('hidden');
-                menuIcon.setAttribute('data-feather', 'x');
-                menuOpen = true;
-            } else {
-                // Закрываем меню
-                menu.classList.add('hidden');
-                menuIcon.setAttribute('data-feather', 'menu');
-                menuOpen = false;
-            }
-            feather.replace();
-        }
-        
-        function closeMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            const menuIcon = document.getElementById('menu-icon');
-            
-            menu.classList.add('hidden');
-            menuIcon.setAttribute('data-feather', 'menu');
-            menuOpen = false;
-            feather.replace();
-            
-            // Гарантируем что кнопка остается кликабельной
-            setTimeout(() => {
-                const menuButton = document.getElementById('menu-button');
-                menuButton.style.pointerEvents = 'auto';
-            }, 100);
-        }
-        
-        // Закрытие меню при клике вне его области
-        document.addEventListener('click', function(event) {
-            const menu = document.getElementById('mobile-menu');
-            const menuButton = document.getElementById('menu-button');
-            
-            if (menuOpen && !menu.contains(event.target) && !menuButton.contains(event.target)) {
-                closeMobileMenu();
-            }
-        });
-        
-        // Закрытие меню при скролле
-        window.addEventListener('scroll', function() {
-            if (menuOpen) {
-                closeMobileMenu();
-            }
-        });
-        
-        // Защита от потери кликабельности
-        document.addEventListener('touchstart', function(event) {
-            const menuButton = document.getElementById('menu-button');
-            if (menuButton.contains(event.target)) {
-                event.stopPropagation();
-            }
-        }, { passive: true });
-        
-        // Form handling
-        document.getElementById('contact-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Thank you! We will contact you soon to schedule your free lesson.');
-            this.reset();
-        });
-        
-        // Animation triggers
-        document.addEventListener('DOMContentLoaded', function() {
-            const animateElements = document.querySelectorAll('.fade-in');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            animateElements.forEach(el => {
-                observer.observe(el);
-            });
-        });
-    </script>
-</body>
-</html>
+</section>
